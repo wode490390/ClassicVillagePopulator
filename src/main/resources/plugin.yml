@@ -1,0 +1,9 @@
+main: cn.wode490390.nukkit.vipop.ClassicVillagePlugin
+name: "ClassicVillagePopulator"
+description: "This is a plugin that implements the old village feature for Nukkit servers"
+author: "wode490390"
+website: "http://wode490390.cn/"
+version: "${pom.version}"
+api: ["1.0.0"]
+load: STARTUP
+softdepend: ["MobPlugin"]
