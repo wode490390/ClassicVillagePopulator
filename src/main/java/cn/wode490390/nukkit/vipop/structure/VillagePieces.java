@@ -233,12 +233,15 @@ public class VillagePieces { //TODO: mossyStoneSelector (zombie village)
         protected PopulatorVillage.Type type;
         protected boolean isZombieVillage;
 
+        protected int yOffset;
+
         protected VillagePiece(StartPiece start, int genDepth) {
             super(genDepth);
 
             if (start != null) {
                 this.type = start.type;
                 this.isZombieVillage = start.isZombieVillage;
+                this.yOffset = start.yOffset;
             } else {
                 this.type = PopulatorVillage.Type.PLAINS;
             }
@@ -307,21 +310,21 @@ public class VillagePieces { //TODO: mossyStoneSelector (zombie village)
 
             for (int x = this.boundingBox.x0; x <= this.boundingBox.x1; ++x) {
                 for (int z = this.boundingBox.z0; z <= this.boundingBox.z1; ++z) {
-                    vec.setComponents(x, 64, z);
+                    vec.setComponents(x, 64 + this.yOffset, z);
 
                     if (boundingBox.isInside(vec)) {
                         BaseFullChunk chunk = level.getChunk(x >> 4, z >> 4);
                         if (chunk == null) {
-                            sum += 63 + 1 - 1;
+                            sum += 63 + 1 - 1 + this.yOffset;
                         } else {
                             int cx = x & 0xf;
                             int cz = z & 0xf;
                             int y = chunk.getHighestBlockAt(cx, cz);
                             int id = chunk.getBlockId(cx, y, cz);
-                            while (Block.transparent[id] && y > 63 + 1 - 1) {
+                            while (Block.transparent[id] && y > 63 + 1 - 1 + this.yOffset) {
                                 id = chunk.getBlockId(cx, --y, cz);
                             }
-                            sum += Math.max(y, 63 + 1 - 1);
+                            sum += Math.max(y, 63 + 1 - 1 + this.yOffset);
                         }
                         ++count;
                     }
@@ -508,7 +511,7 @@ public class VillagePieces { //TODO: mossyStoneSelector (zombie village)
         public List<StructurePiece> pendingRoads = Lists.newArrayList();
 
         //\\ VillageStart::VillageStart(BiomeSource *,Random &,int,int,int)
-        public StartPiece(ChunkManager level, int genDepth, NukkitRandom random, int x, int z, List<PieceWeight> availablePieces, int size) {
+        public StartPiece(ChunkManager level, int genDepth, NukkitRandom random, int x, int z, List<PieceWeight> availablePieces, int size, boolean isNukkitGenerator) {
             super(null, 0, random, x, z);
             this.world = level;
             this.availablePieces = availablePieces;
@@ -533,6 +536,8 @@ public class VillagePieces { //TODO: mossyStoneSelector (zombie village)
             }
 
             this.isZombieVillage = random.nextBoundedInt(50) == 0;
+
+            this.yOffset = isNukkitGenerator ? 2 : 0;
         }
 
         public StartPiece(CompoundTag tag) {
@@ -1913,28 +1918,28 @@ public class VillagePieces { //TODO: mossyStoneSelector (zombie village)
 
             for (int x = this.boundingBox.x0; x <= this.boundingBox.x1; ++x) {
                 for (int z = this.boundingBox.z0; z <= this.boundingBox.z1; ++z) {
-                    BlockVector3 vec = new BlockVector3(x, 64, z);
+                    BlockVector3 vec = new BlockVector3(x, 64 + this.yOffset, z);
 
                     if (boundingBox.isInside(vec)) {
                         BaseFullChunk chunk = level.getChunk(chunkX, chunkZ);
                         if (chunk == null) {
-                            vec.y = 63 - 1;
+                            vec.y = 63 - 1 + this.yOffset;
                         } else {
                             int cx = x & 0xf;
                             int cz = z & 0xf;
                             int y = chunk.getHighestBlockAt(cx, cz);
                             int id = chunk.getBlockId(cx, y, cz);
-                            while (Block.transparent[id] && y > 63 - 1) {
+                            while (Block.transparent[id] && y > 63 - 1 + this.yOffset) {
                                 id = chunk.getBlockId(cx, --y, cz);
                             }
                             vec.y = y;
                         }
 
-                        if (vec.y < 63) {
-                            vec.y = 63 - 1;
+                        if (vec.y < 63 + this.yOffset) {
+                            vec.y = 63 - 1 + this.yOffset;
                         }
 
-                        while (vec.y >= 63 - 1) {
+                        while (vec.y >= 63 - 1 + this.yOffset) {
                             int block = level.getBlockIdAt(vec.x, vec.y, vec.z);
 
                             if (block == Block.GRASS && level.getBlockIdAt(vec.x, vec.y + 1, vec.z) == Block.AIR) {

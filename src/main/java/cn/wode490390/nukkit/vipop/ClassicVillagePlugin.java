@@ -7,6 +7,7 @@ import cn.nukkit.event.level.LevelLoadEvent;
 import cn.nukkit.event.level.LevelUnloadEvent;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.generator.Generator;
+import cn.nukkit.level.generator.Normal;
 import cn.nukkit.level.generator.populator.type.Populator;
 import cn.nukkit.plugin.PluginBase;
 import cn.wode490390.nukkit.vipop.populator.PopulatorVillage;
@@ -52,7 +53,7 @@ public class ClassicVillagePlugin extends PluginBase implements Listener {
         Level level = event.getLevel();
         Generator generator = level.getGenerator();
         if (generator.getId() != Generator.TYPE_FLAT && generator.getDimension() == Level.DIMENSION_OVERWORLD) {
-            populators.add(new PopulatorVillage());
+            populators.add(new PopulatorVillage(generator.getClass() == Normal.class));
         }
         this.populators.put(level, populators);
     }

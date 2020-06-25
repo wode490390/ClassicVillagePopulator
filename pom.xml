@@ -7,7 +7,7 @@
     <groupId>cn.wode490390.nukkit</groupId>
     <artifactId>vipop</artifactId>
     <packaging>jar</packaging>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <name>Classic Village Populator</name>
     <description>This is a plugin that implements the old village feature for Nukkit servers</description>
     <url>http://wode490390.cn/</url>

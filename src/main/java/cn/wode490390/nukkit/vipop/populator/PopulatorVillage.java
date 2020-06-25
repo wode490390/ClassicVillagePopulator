@@ -22,6 +22,12 @@ public class PopulatorVillage extends Populator {
     protected static final int SPACING = 32;
     protected static final int SEPARATION = 8;
 
+    protected final boolean isNukkitGenerator;
+
+    public PopulatorVillage(boolean isNukkitGenerator) {
+        this.isNukkitGenerator = isNukkitGenerator;
+    }
+
     @Override
     public void populate(ChunkManager level, int chunkX, int chunkZ, NukkitRandom random, FullChunk chunk) {
         //\\ VillageFeature::isFeatureChunk(BiomeSource const &,Random &,ChunkPos const &,uint)
@@ -35,7 +41,7 @@ public class PopulatorVillage extends Populator {
 
             if (chunkX == cX * SPACING + random.nextBoundedInt(SPACING - SEPARATION) && chunkZ ==  cZ * SPACING + random.nextBoundedInt(SPACING - SEPARATION)) {
                 //\\ VillageFeature::createStructureStart(Dimension &,Random &,ChunkPos const &)
-                VillageStart start = new VillageStart(level, chunkX, chunkZ);
+                VillageStart start = new VillageStart(level, chunkX, chunkZ, this.isNukkitGenerator);
                 start.generatePieces(level, chunkX, chunkZ);
 
                 if (start.isValid()) { //TODO: serialize nbt
@@ -91,14 +97,16 @@ public class PopulatorVillage extends Populator {
     public static class VillageStart extends StructureStart {
 
         private boolean valid;
+        private final boolean isNukkitGenerator;
 
-        public VillageStart(ChunkManager level, int chunkX, int chunkZ) {
+        public VillageStart(ChunkManager level, int chunkX, int chunkZ, boolean isNukkitGenerator) {
             super(level, chunkX, chunkZ);
+            this.isNukkitGenerator = isNukkitGenerator;
         }
 
         @Override
         public void generatePieces(ChunkManager level, int chunkX, int chunkZ) {
-            VillagePieces.StartPiece start = new VillagePieces.StartPiece(level, 0, this.random, (chunkX << 4) + 2, (chunkZ << 4) + 2, VillagePieces.getStructureVillageWeightedPieceList(this.random, SIZE), SIZE);
+            VillagePieces.StartPiece start = new VillagePieces.StartPiece(level, 0, this.random, (chunkX << 4) + 2, (chunkZ << 4) + 2, VillagePieces.getStructureVillageWeightedPieceList(this.random, SIZE), SIZE, isNukkitGenerator);
             this.pieces.add(start);
             start.addChildren(start, this.pieces, this.random);
 
