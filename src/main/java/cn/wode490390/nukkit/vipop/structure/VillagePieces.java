@@ -360,10 +360,10 @@ public class VillagePieces { //TODO: mossyStoneSelector (zombie village)
                         CompoundTag nbt = Entity.getDefaultNBT(new Vector3(worldX + .5, worldY, worldZ + .5));
 
                         if (this.isZombieVillage) {
-                            nbt.putString("id", "ZombieVillagerV1")
+                            nbt.putString("id", "ZombieVillager") // ZombieVillagerV1
                                     .putInt("Profession", this.getVillagerProfession(count, EntityVillagerV1.PROFESSION_FARMER));
                         } else {
-                            nbt.putString("id", "VillagerV1")
+                            nbt.putString("id", "Villager") // VillagerV1
                                     .putInt("Profession", this.getVillagerProfession(count, ThreadLocalRandom.current().nextInt(6)));
                         }
 
